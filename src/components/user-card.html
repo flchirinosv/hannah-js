@@ -1,0 +1,49 @@
+<style>
+  /* El CSS es Scoped automáticamente por el compilador de Go */
+  .card { border: 1px solid #333; padding: 1rem; border-radius: 8px; }
+  .title { color: #04d361; font-weight: bold; }
+</style>
+
+<template>
+  <!-- ️ IMPORTANTE: Solo UN elemento raíz -->
+  <div class="card">
+    <h3 class="title" h-text="name">Usuario</h3>
+    <p h-text="role">Rol</p>
+    <button id="btn-promote" h-on:click="toggle">Promover</button>
+  </div>
+</template>
+
+<script>
+  import { createSignal, readSignal, writeSignal } from '../core/reactive.js';
+
+  export default {
+    // setup() {
+    //   // Las señales deben crearse con createSignal
+    //   return {
+    //     name: createSignal('Nuevo Usuario'),
+    //     role: createSignal('Guest')
+    //   };
+    // },
+    // events(context) {
+    //   return {
+    //     '#btn-promote': {
+    //       click: () => {
+    //         const status = readSignal(context.role);
+    //         writeSignal(context.role, status === 'Admin' ? 'Guest' : 'Admin');
+    //       }
+    //     }
+    //   };
+    // }
+    data() {
+      return {
+        name: 'Nuevo Usuario',
+        role: 'Guest'
+      }
+    },
+    methods: {
+      toggle(ctx) {
+        ctx.role = ctx.role === 'Guest' ? 'Admin' : 'Guest'
+      }
+    }
+  }
+</script>

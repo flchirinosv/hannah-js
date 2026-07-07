@@ -1,0 +1,72 @@
+<style>
+  .parent-box {
+    padding: 1.5rem;
+    border: 1px solid #3498db;
+    border-radius: 12px;
+    background: #0d151c;
+    max-width: 500px;
+    margin: 2rem auto;
+  }
+  .controls { display: flex; gap: 10px; margin-bottom: 1rem; }
+  .btn-primary { background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+  .btn-secondary { background: #2c3e50; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; }
+  .reply-box { margin-top: 15px; padding: 10px; background: #1a252c; border-left: 3px solid #f1c40f; color: #ecf0f1; border-radius: 4px; }
+</style>
+
+<template>
+  <div class="parent-box">
+    <h2 style="color: #3498db; margin-top: 0;">👨 Componente Padre</h2>
+
+    <div class="controls">
+      <button id="btn-toggle" class="btn-primary" h-on:click="toggleChild">Alternar h-if</button>
+      <button id="btn-mutate" class="btn-secondary" h-on:click="mutateProp">Mutar Prop</button>
+    </div>
+
+    <p>Estado del hijo: <strong h-text="statusText">Oculto</strong></p>
+
+    <div class="reply-box">
+       Última respuesta: <strong style="color: #f1c40f;" h-text="childReply">Ninguna todavía...</strong>
+    </div>
+
+    <div h-if="showChild">
+      <div h-component="child-view" h-bind:message="parentMessage"></div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      showChild: false,
+      parentMessage: 'Mensaje estático inicial',
+      childReply: 'Ninguna todavía...',
+      mutationCount: 0
+    };
+  },
+  computed: {
+    statusText(ctx) {
+      return ctx.showChild ? 'Instanciado (Visible)' : 'Destruido (Oculto)';
+    }
+  },
+  methods: {
+    toggleChild(ctx) {
+      ctx.showChild = !ctx.showChild;
+    },
+    mutateProp(ctx) {
+      ctx.mutationCount++;
+      ctx.parentMessage = `Mutación reactiva #${ctx.mutationCount}`;
+    }
+  },
+  events(ctx) {
+    // Para escuchar eventos personalizados del hijo
+    return {
+      '[h-component="child-view"]': {
+        'child-reply': (e) => {
+          ctx.childReply = e.detail;
+        }
+      }
+    };
+  }
+}
+</script>

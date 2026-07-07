@@ -1,0 +1,61 @@
+<style>
+  .child-box { 
+      padding: 1.5rem; 
+      border: 2px dashed #e74c3c; 
+      border-radius: 8px; 
+      background: #1a1111; 
+      margin-top: 1rem; 
+  }
+  .child-title { color: #e74c3c; margin-top: 0; }
+  .prop-highlight { color: #f1c40f; font-weight: bold; }
+  .btn-reply { background: #f1c40f; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 15px; }
+  .btn-reply:hover { opacity: 0.9; }
+</style>
+
+<template>
+  <div class="child-box">
+    <h3 class="child-title">👶 Componente Hijo</h3>
+    <p>Mensaje desde el padre: <span class="prop-highlight" h-text="receivedMessage"></span></p>
+    <p style="color: #888; font-size: 0.9em;">Mira la consola: Me destruyo y me recreo limpiamente.</p>
+    <button id="btn-reply" class="btn-reply">Responder al Padre</button>
+  </div>
+</template>
+
+<script>
+  import { createSignal, readSignal, writeSignal } from '../core/reactive.js';
+
+  export default {
+    // 🌟 MAGIA DEL FRAMEWORK: El hijo recibe las props como parámetros
+    setup(props, emit) {
+      const counter = createSignal(0);
+      // 'props.message' contiene directamente el ID numérico de la señal del padre.
+      // Al retornarlo en el contexto, el hijo se suscribe a la señal del padre en O(1)
+      return {
+        counter: counter,
+        receivedMessage: props.message,
+        emit
+      };
+    },
+    events(context) {
+      console.log('✅ [Ciclo de vida] Hijo instanciado y montado en el DOM');
+      
+      return {
+        "#btn-reply": {
+          click: (e) => {
+            console.log('click en btn-reply del hijo');
+            e.stopPropagation();
+            let counter = readSignal(context.counter);
+
+            counter++
+            
+            // Escribimos el nuevo valor en la memoria de la señal
+            writeSignal(context.counter, counter);
+
+            // Disparamos un evento Custom DOM nativo llamado 'child-reply'
+            context.emit('child-reply', `¡Hola padre! Esta es mi respuesta #${counter}`);
+          }
+        }
+      };
+    }
+  }
+</script>

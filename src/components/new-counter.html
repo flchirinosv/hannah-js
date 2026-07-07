@@ -1,0 +1,36 @@
+<template>
+  <div>
+    <p h-text="message"></p>
+    <input h-sync="message" />
+    <!-- Nueva sintaxis h-on: -->
+    <button h-on:click="increment">Incrementar</button>
+    <!-- También funciona h-click (compatibilidad) -->
+    <button h-click="reset">Reset</button>
+    <p>Contador: <span h-text="count"></span> (doble: <span h-text="doubled"></span>)</p>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      message: 'Hola',
+      count: 0
+    };
+  },
+  methods: {
+    increment(ctx) {
+      ctx.count++;
+    },
+    reset(ctx) {
+      ctx.count = 0;
+      ctx.message = 'Reiniciado';
+    }
+  },
+  computed: {
+    doubled(ctx) {
+      return ctx.count * 2;
+    }
+  }
+}
+</script>

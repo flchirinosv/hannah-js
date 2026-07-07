@@ -1,0 +1,50 @@
+<style>
+  .child-box {
+    padding: 1.5rem;
+    border: 2px dashed #e74c3c;
+    border-radius: 8px;
+    background: #1a1111;
+    margin-top: 1rem;
+  }
+  .child-title { color: #e74c3c; margin-top: 0; }
+  .prop-highlight { color: #f1c40f; font-weight: bold; }
+  .btn-reply { background: #f1c40f; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 15px; }
+  .btn-reply:hover { opacity: 0.9; }
+</style>
+
+<template>
+  <div class="child-box">
+    <h3 class="child-title">👶 Componente Hijo</h3>
+    <p>Mensaje desde el padre: <span class="prop-highlight" h-text="receivedMessage"></span></p>
+    <p style="color: #888; font-size: 0.9em;">Mira la consola: Me destruyo y me recreo limpiamente.</p>
+    <button id="btn-reply" class="btn-reply" h-on:click="replyToParent">Responder al Padre</button>
+  </div>
+</template>
+
+<script>
+export default {
+  props: ['message'],
+  data() {
+    return {
+      counter: 0
+    };
+  },
+  methods: {
+    replyToParent(ctx) {
+      console.log('click en btn-reply del hijo');
+      ctx.counter++;
+      // Emitir evento personalizado
+      ctx.emit('child-reply', `¡Hola padre! Esta es mi respuesta #${ctx.counter}`);
+    }
+  },
+  setup(props, emit) {
+    // Este componente necesita props y emit, así que usamos setup para eso
+    // Pero también podemos usar la nueva API y acceder a props y emit a través del contexto
+    // Para simplificar, mantenemos setup con props y emit
+    return {
+      receivedMessage: props.message,
+      emit: emit
+    };
+  }
+}
+</script>

@@ -1,0 +1,49 @@
+<template>
+  <div class="counter-box" h-style:--dynamic-bg="bgColor">
+    <h2>Contador AOT: <span h-text="count">0</span></h2>
+    <button h-on:click="increment">+ Incrementar</button>
+    <button h-on:click="changeColor">🎨 Cambiar Color</button>
+  </div>
+</template>
+
+<style>
+  .counter-box {
+    border: 1px solid #04d361;
+    padding: 1.5rem;
+    border-radius: 8px;
+    background-color: var(--dynamic-bg, #141416);
+    color: lightcyan;
+    transition: background-color 0.4s ease;
+  }
+  .counter-box button {
+    background: #04d361;
+    color: #000;
+    font-weight: bold;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    margin-right: 0.5rem;
+  }
+</style>
+
+<script>
+export default {
+  data() {
+    return {
+      count: 0,
+      bgColor: '#141416'
+    };
+  },
+  methods: {
+    increment(ctx) {
+      ctx.count++;
+    },
+    changeColor(ctx) {
+      const colors = ['#141416', '#2d1b4e', '#0f3b21', '#4a1515', '#15304a'];
+      const current = ctx.bgColor;
+      const nextIndex = (colors.indexOf(current) + 1) % colors.length;
+      ctx.bgColor = colors[nextIndex];
+    }
+  }
+}
+</script>

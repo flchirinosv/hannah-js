@@ -1,0 +1,302 @@
+// GENERADO AUTOMÁTICAMENTE POR HANNAH-CORE AOT - NO MODIFICAR
+import { registerSink, registerListSink, SINK_TYPE_TEXT, SINK_TYPE_SHOW, SINK_TYPE_IF, SINK_TYPE_STYLE } from '../core/reactive.js';
+import { compileDirectives } from '../core/directives.js';
+
+const _sfc_main = {
+    setup() {
+      const saved = localStorage.getItem('hannah-todos');
+      let initialTodos = saved ? JSON.parse(saved) : [];
+
+      // let tmplist = []
+      // for (let index = 0; index < 3000; index++) {
+      //   tmplist = [...tmplist, { 
+      //    id: crypto.randomUUID(), 
+      //    text: `item ${index}`, 
+      //    completed: false,
+      //    editing: false,
+      //    editingText: ''
+      //   }];
+      // }
+      // initialTodos = [...initialTodos, ...tmplist];
+
+      const data = () => ({
+        todos: initialTodos,
+        inputValue: '',
+        filter: 'all'
+      });
+
+      const computed = (ctx) => ({
+        filteredTodos(ctx) {
+          const todos = ctx.todos;
+          const filter = ctx.filter;
+          if (filter === 'active') return todos.filter(t => !t.completed);
+          if (filter === 'completed') return todos.filter(t => t.completed);
+          return todos;
+        },
+        activeCount(ctx) {
+          return ctx.todos.filter(t => !t.completed).length;
+        },
+        isEmpty(ctx) {
+          return ctx.todos.length === 0;
+        },
+        filterAllActive(ctx) {
+          return { active: ctx.filter === 'all' };
+        },
+        filterActiveActive(ctx) {
+          return { active: ctx.filter === 'active' };
+        },
+        filterCompletedActive(ctx) {
+          return { active: ctx.filter === 'completed' };
+        }
+      });
+
+      const methods = (ctx) => ({
+        syncTodos(ctx) {
+          localStorage.setItem('hannah-todos', JSON.stringify(ctx.todos));
+        },
+        addTodo(ctx) {console.log('probando desde addTodo');
+          const text = ctx.inputValue.trim();
+          if (!text) return;
+          const newTodo = {
+            id: crypto.randomUUID(),
+            text,
+            completed: false,
+            editing: false,
+            editingText: ''
+          };
+          ctx.todos = [...ctx.todos, newTodo];
+          ctx.inputValue = '';
+          ctx.syncTodos(ctx);
+        },
+        handleEnter(ctx, e) {
+          if (e.key === 'Enter') {
+            ctx.addTodo(ctx);
+          }
+        },
+        toggleTodo(ctx, e) {console.log('probando desde toggleTodo');
+          const id = e.target.dataset.id;
+          if (!id) {
+            console.warn('[toggleTodo] No se encontró el ID en el evento', e);
+            return;
+          }
+          const todo = ctx.todos.find(t => t.id === id);
+          if (todo) {
+            // 🔥 No mutar: crear un nuevo objeto
+            const updatedTodo = { ...todo, completed: e.target.checked };
+            ctx.todos = ctx.todos.map(t => t.id === id ? updatedTodo : t);
+            ctx.syncTodos(ctx);
+          }
+        },
+        editTodo(ctx, e) {
+          const id = e.target.dataset.id;
+          if (!id) {
+            console.warn('[editTodo] No se encontró el ID en el evento', e);
+            return;
+          }
+          const todo = ctx.todos.find(t => t.id === id);
+          if (todo) {
+            // 🔥 No mutar: crear un nuevo objeto
+            const updatedTodo = { ...todo, editing: true, editingText: todo.text };
+            ctx.todos = ctx.todos.map(t => t.id === id ? updatedTodo : t);
+          }
+        },
+        saveTodo(ctx, e) {console.log('probando desde saveTodo');
+          const id = e.target.dataset.id;
+          if (!id) {
+            console.warn('[saveTodo] No se encontró el ID en el evento', e);
+            return;
+          }
+          const todo = ctx.todos.find(t => t.id === id);
+          if (todo) {
+            const newText = todo.editingText.trim();
+
+            ctx.todos = ctx.todos.map(t => t.id === id ? {
+              ...todo, 
+              text: newText || todo.text,
+              editing: false 
+            } : t);
+            ctx.syncTodos(ctx);
+          }
+        },
+        handleEditEnter(ctx, e) {
+          if (e.key === 'Enter') {
+            ctx.saveTodo(ctx, e);
+          }
+        },
+        deleteTodo(ctx, e) {
+          const id = e.target.dataset.id;
+          if (!id) {
+            console.warn('[deleteTodo] No se encontró el ID en el evento', e);
+            return;
+          }
+          ctx.todos = ctx.todos.filter(t => t.id !== id);
+          ctx.syncTodos(ctx);
+        },
+        setFilter(ctx, e) {
+          ctx.filter = e.target.dataset.filter;
+        },
+        clearCompleted(ctx) {
+          ctx.todos = ctx.todos.filter(t => !t.completed);
+          ctx.syncTodos(ctx);
+        }
+      });
+
+      return { data, computed, methods };
+    }
+  }
+
+// Funciones auxiliares generadas por el compilador
+if (!window.__hannah_expr) window.__hannah_expr = {};
+window.__hannah_expr['__expr_todo-list_1'] = function(ctx) {
+    return {completed:ctx.todo.completed};
+};
+window.__hannah_expr['__expr_todo-list_2'] = function(ctx) {
+    return !ctx.todo.editing;
+};
+window.__hannah_expr['__expr_todo-list_3'] = function(ctx) {
+    return ctx.todo.editing;
+};
+window.__hannah_expr['__expr_todo-list_4'] = function(ctx) {
+    return !ctx.todo.editing;
+};
+window.__hannah_expr['__expr_todo-list_5'] = function(ctx) {
+    return ctx.todo.editing;
+};
+
+const tpl = document.createElement('template');
+tpl.innerHTML = `<div class="todo-app" data-h-todo-list=""><div class="todo-header" data-h-todo-list=""><input h-sync="inputValue" h-on:keydown="handleEnter" class="todo-input" placeholder="¿Qué necesitas hacer?" data-h-todo-list=""/><button h-on:click="addTodo" class="todo-btn" data-h-todo-list="">Añadir</button></div><p h-text="inputValue" data-h-todo-list=""></p><div class="todo-filters" data-h-todo-list=""><button h-on:click="setFilter" data-filter="all" class="filter-btn" h-bind:class="filterAllActive" data-h-todo-list="">Todos</button><button h-on:click="setFilter" data-filter="active" class="filter-btn" h-bind:class="filterActiveActive" data-h-todo-list="">Activos</button><button h-on:click="setFilter" data-filter="completed" class="filter-btn" h-bind:class="filterCompletedActive" data-h-todo-list="">Completados</button></div><div class="empty-state" h-show="isEmpty" data-h-todo-list="">No hay tareas</div><ul class="todo-list" data-h-todo-list=""><template h-each="todo in filteredTodos" h-key="id" data-h-todo-list=""><li class="todo-item" h-bind:class="__expr_todo-list_1" data-h-todo-list=""><input type="checkbox" class="todo-toggle" h-sync="todo.completed" h-on:change="toggleTodo" h-bind:data-id="todo.id" data-h-todo-list=""/><span h-show="__expr_todo-list_2" class="todo-text" h-text="todo.text" data-h-todo-list=""></span><div h-show="__expr_todo-list_3" style="flex:1; display:flex; gap:0.5rem;" data-h-todo-list=""><input h-sync="todo.editingText" h-on:keydown="handleEditEnter" class="edit-input" style="flex:1; box-sizing: border-box; width: 100%;" h-bind:data-id="todo.id" data-h-todo-list=""/></div><button h-show="__expr_todo-list_4" h-bind:data-id="todo.id" h-on:click="editTodo" class="btn-edit" title="Editar" data-h-todo-list="">✏️</button><button h-show="__expr_todo-list_5" h-bind:data-id="todo.id" h-on:click="saveTodo" class="btn-save" title="Guardar" data-h-todo-list="">💾</button><button h-bind:data-id="todo.id" h-on:click="deleteTodo" class="btn-delete" title="Eliminar" data-h-todo-list="">🗑️</button></li></template></ul><div class="todo-footer" data-h-todo-list=""><span data-h-todo-list="">Activos: <strong h-text="activeCount" data-h-todo-list="">0</strong></span><button h-on:click="clearCompleted" class="todo-btn danger" data-h-todo-list="">Limpiar completados</button></div></div>`;
+
+_sfc_main.name = 'todo-list';
+_sfc_main.styles = `.todo-app[data-h-todo-list] {
+  max-width: 600px; margin: 2rem auto; background: #141416; border: 1px solid #232326; border-radius: 12px; padding: 1.5rem;
+}
+
+.todo-header[data-h-todo-list] {
+  display: flex; gap: 0.5rem; margin-bottom: 1rem;
+}
+
+.todo-input[data-h-todo-list] {
+  flex: 1; background: #0c0c0e; border: 1px solid #333; color: #e1e1e6; padding: 0.75rem; border-radius: 6px; outline: none;
+}
+
+.todo-input[data-h-todo-list]:focus {
+  border-color: #04d361;
+}
+
+.todo-btn[data-h-todo-list] {
+  background: #04d361; color: #000; border: none; padding: 0.75rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; transition: opacity 0.2s;
+}
+
+.todo-btn[data-h-todo-list]:hover {
+  opacity: 0.9;
+}
+
+.todo-btn.danger[data-h-todo-list] {
+  background: #ff4444; color: white;
+}
+
+.todo-filters[data-h-todo-list] {
+  display: flex; gap: 0.5rem; margin-bottom: 1rem;
+}
+
+.filter-btn[data-h-todo-list] {
+  background: #232326; color: #888; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; transition: all 0.2s;
+}
+
+.filter-btn[data-h-todo-list]:hover {
+  color: #e1e1e6;
+}
+
+.filter-btn.active[data-h-todo-list] {
+  background: #04d361; color: #000;
+}
+
+.todo-list[data-h-todo-list] {
+  list-style: none; padding: 0; margin: 0; max-height: 400px; overflow-y: auto;
+}
+
+.todo-item[data-h-todo-list] {
+  display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #1c1c1f; margin-bottom: 0.5rem; border-radius: 6px; border-left: 3px solid #04d361; transition: all 0.2s;
+}
+
+.todo-item.completed[data-h-todo-list] {
+  opacity: 0.5; border-left-color: #555;
+}
+
+.todo-item.completed[data-h-todo-list] .todo-text {
+  text-decoration: line-through; color: #888;
+}
+
+.todo-toggle[data-h-todo-list] {
+  width: 20px; height: 20px; cursor: pointer; accent-color: #04d361;
+}
+
+.todo-text[data-h-todo-list] {
+  flex: 1; color: #e1e1e6;
+}
+
+.btn-edit[data-h-todo-list], .btn-save[data-h-todo-list] {
+  background: transparent; border: none; color: #f1c40f; cursor: pointer; font-size: 1.2rem; padding: 0.25rem;
+}
+
+.btn-save[data-h-todo-list] {
+  color: #2ecc71;
+}
+
+.btn-delete[data-h-todo-list] {
+  background: transparent; border: none; color: #ff4444; cursor: pointer; font-size: 1.2rem; padding: 0.25rem;
+}
+
+.btn-edit[data-h-todo-list]:hover, .btn-save[data-h-todo-list]:hover, .btn-delete[data-h-todo-list]:hover {
+  transform: scale(1.1);
+}
+
+.todo-footer[data-h-todo-list] {
+  display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #232326; color: #888; font-size: 0.9rem;
+}
+
+.empty-state[data-h-todo-list] {
+  text-align: center; color: #555; padding: 2rem; font-style: italic;
+}
+
+.edit-input[data-h-todo-list] {
+  flex: 1; background: #0c0c0e; border: 1px solid #333; color: #e1e1e6; padding: 0.4rem; border-radius: 4px; outline: none; font-size: 0.95rem;
+}
+
+.edit-input[data-h-todo-list]:focus {
+  border-color: #f1c40f;
+}
+
+.todo-text[data-h-todo-list] {
+  flex: 1;
+}`;
+_sfc_main.render = function(context, instanceId) {
+    const fragment = tpl.content.cloneNode(true);
+    const root = fragment.firstElementChild;
+
+    {
+        const targetEl = root.childNodes[5].childNodes[0].childNodes[1];
+        if (context.activeCount !== undefined) {
+            registerSink(targetEl, SINK_TYPE_TEXT, context.activeCount, instanceId);
+        }
+    }
+    {
+        const targetEl = root.childNodes[1];
+        if (context.inputValue !== undefined) {
+            registerSink(targetEl, SINK_TYPE_TEXT, context.inputValue, instanceId);
+        }
+    }
+    {
+        const targetEl = root.childNodes[3];
+        if (context.isEmpty !== undefined) {
+            registerSink(targetEl, SINK_TYPE_SHOW, context.isEmpty, instanceId);
+        }
+    }
+    if (context.filteredTodos !== undefined) {
+        registerListSink(root.childNodes[4].childNodes[0], context.filteredTodos, 'id', 'todo', instanceId, compileDirectives);
+    }
+
+    return fragment;
+};
+
+export const TodoListComponent = _sfc_main;
